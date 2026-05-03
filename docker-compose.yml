@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # TradeScope CLI Service
+  tradescope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tradescope
+    volumes:
+      - ./output:/app/output
+    environment:
+      - LOG_LEVEL=INFO
+      - TRADESCOPE_DATA_SOURCE=local
+    profiles:
+      - cli
+
+  # TradeScope Development Environment
+  tradescope-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tradescope-dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    environment:
+      - LOG_LEVEL=DEBUG
+      - TRADESCOPE_DATA_SOURCE=mock
+    profiles:
+      - dev
+
+  # TradeScope with Python Interactive Shell
+  tradescope-shell:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tradescope-shell
+    stdin_open: true
+    tty: true
+    entrypoint: ["python", "-i"]
+    volumes:
+      - .:/app
+    profiles:
+      - shell
