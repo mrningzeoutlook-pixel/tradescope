@@ -1,134 +1,290 @@
-# TradeScope 📊
+# TradeScope
 
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status: In Development](https://img.shields.io/badge/Status-In%20Development-yellow.svg)](https://github.com/mrningzeoutlook-pixel/tradescope)
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Build Status](https://img.shields.io/badge/status-beta-orange)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
-**International Trade Data Analysis & Market Intelligence Toolkit**
+*International Trade Data Analysis & Market Intelligence Toolkit*
 
-Analyze markets, compare tariffs, and generate actionable trade insights — built by a cross-border entrepreneur, for cross-border entrepreneurs.
+TradeScope is a Python toolkit for cross-border business analysis, featuring AI-powered market intelligence, tariff tracking, and competitive analysis through a three-layer agent architecture.
 
-## 🎯 Problem Statement
-
-Cross-border trade decisions are often made based on incomplete information. Small and medium businesses lack access to the same market intelligence tools that large corporations use. Understanding tariff changes, demand trends, and competitive dynamics across markets requires hours of manual research.
-
-## ✨ Solution
-
-TradeScope provides a multi-agent AI pipeline for trade intelligence:
+## Architecture
 
 ```mermaid
-graph LR
-    A[Product + Market] --> B[Data Collection Agent]
-    B --> C[Analysis Agent]
-    C --> D[Intelligence Agent]
+graph TD
+    A[Market Data Sources] --> B[DataCollectionAgent]
+    B --> C[AnalysisAgent]
+    C --> D[IntelligenceAgent]
     D --> E[Market Intelligence Report]
-    
-    style A fill:#e1f5ff
-    style E fill:#d4edda
+
+    subgraph DataCollectionAgent
+        B1[HS Code Lookup] --> B2[Tariff Rates]
+        B2 --> B3[Demand Index]
+        B3 --> B4[Risk Assessment]
+    end
+
+    subgraph AnalysisAgent
+        C1[Market Scoring] --> C2[Margin Calculation]
+        C2 --> C3[Trend Analysis]
+        C3 --> C4[Recommendation Engine]
+    end
+
+    subgraph IntelligenceAgent
+        D1[Text Format] --> D2[JSON Format]
+        D2 --> D3[HTML Report]
+    end
 ```
 
-## 🏗️ Architecture
+## Features
 
-| Agent | Responsibility | Input | Output |
-|-------|---------------|-------|--------|
-| **DataCollectionAgent** | Gather trade statistics and policy data | Product + Market | Raw trade data |
-| **AnalysisAgent** | Process and analyze market trends | Trade data | Market scores & recommendations |
-| **IntelligenceAgent** | Generate actionable insights | Analysis results | Formatted intelligence report |
+- **Market Analysis** - Analyze import/export trends by HS code and country
+- **Tariff Intelligence** - Track and compare tariff rates across markets
+- **Demand Forecasting** - AI-powered demand prediction for product categories
+- **Competitive Landscape** - Identify market dynamics and competition levels
+- **Risk Assessment** - Evaluate geopolitical and trade policy risks
+- **Multi-Format Output** - Generate text, JSON, or HTML reports
 
-### Supported Markets
+## Platform Support
 
-| Market | Region | Tariff Rate | Demand Index | Risk Level |
-|--------|--------|-------------|-------------|------------|
-| European Union | Europe | 12.0% | 85/100 | Low (0.3) |
-| United States | North America | 16.5% | 92/100 | Low (0.25) |
-| Southeast Asia | Asia-Pacific | 5.0% | 78/100 | Medium (0.4) |
-| Middle East | MENA | 8.0% | 70/100 | Medium (0.5) |
-| Latin America | Americas | 14.0% | 65/100 | Medium (0.45) |
-| Japan & Korea | Asia-Pacific | 10.0% | 88/100 | Low (0.2) |
+| Platform | Status | Python Version |
+|----------|--------|----------------|
+| Windows | Fully Supported | 3.8, 3.9, 3.10, 3.11, 3.12 |
+| macOS | Fully Supported | 3.8, 3.9, 3.10, 3.11, 3.12 |
+| Linux | Fully Supported | 3.8, 3.9, 3.10, 3.11, 3.12 |
+| Docker | Fully Supported | All Python versions |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/mrningzeoutlook-pixel/tradescope.git
 cd tradescope
+
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### CLI Usage
+### Basic Usage
 
 ```bash
-# Analyze a single market
+# Analyze a specific market
 python tradescope.py analyze --product "women-apparel" --market "EU"
 
 # Compare across all markets
-python tradescope.py compare --product "plus-size-fashion" --output json
+python tradescope.py compare --product "electronics"
+
+# Generate JSON output
+python tradescope.py analyze --product "home-textiles" --market "US" --output json
+
+# Generate HTML report
+python tradescope.py analyze --product "plus-size-fashion" --market "SE-Asia" --output html
+
+# List available options
+python tradescope.py list --type markets
+python tradescope.py list --type products
 ```
 
-### Python API
+### Python API Usage
 
 ```python
-from tradescope import TradeScopePipeline
+from src.pipeline import TradeScopePipeline
 
+# Initialize the pipeline
 pipeline = TradeScopePipeline()
 
-# Analyze a market
-report = pipeline.analyze("women-apparel", "EU", output="text")
+# Analyze a specific market
+report = pipeline.analyze(
+    product="women-apparel",
+    market="EU",
+    output="text"
+)
 print(report)
 
-# Compare all markets
-comparison = pipeline.compare("plus-size-fashion")
-print(f"Best market: {comparison['best_market']}")
+# Compare across multiple markets
+result = pipeline.compare_markets(
+    product="electronics",
+    markets=["EU", "US", "SE-Asia"]
+)
+
+# Access rankings
+for ranking in result["comparison"]["rankings"]:
+    print(f"#{ranking['rank']}: {ranking['market']} - Score: {ranking['score']}")
 ```
 
-## 📂 Project Structure
+### Advanced API Usage
+
+```python
+from src.agents import DataCollectionAgent, AnalysisAgent, IntelligenceAgent
+
+# Use agents individually
+collection_agent = DataCollectionAgent()
+analysis_agent = AnalysisAgent()
+intelligence_agent = IntelligenceAgent()
+
+# Step 1: Collect data
+data = collection_agent.collect("electronics", "US")
+
+# Step 2: Analyze with custom weights
+analysis_agent.weights = {
+    "tariff": 0.4,   # Prioritize low tariff
+    "demand": 0.3,
+    "risk": 0.3,
+}
+analysis = analysis_agent.analyze(data)
+
+# Step 3: Generate report
+report = intelligence_agent.generate_report(analysis, "html")
+```
+
+## Project Structure
 
 ```
 tradescope/
 ├── src/
-│   ├── agents/          # Agent implementations
-│   ├── config/          # Market data configurations
-│   ├── utils/           # Utility functions
-│   └── pipeline.py      # Main pipeline orchestration
-├── tests/               # Test suite
-├── docs/                # Documentation
-├── examples/            # Usage examples
-├── tradescope.py        # CLI entry point
-├── setup.py             # Package configuration
-├── Dockerfile           # Docker support
-└── README.md
+│   ├── __init__.py           # Package initialization
+│   ├── pipeline.py           # Main orchestration pipeline
+│   ├── agents/               # Agent modules
+│   │   ├── __init__.py
+│   │   ├── data_collection.py    # DataCollectionAgent
+│   │   ├── analysis.py           # AnalysisAgent
+│   │   └── intelligence.py       # IntelligenceAgent
+│   ├── config/               # Configuration
+│   │   ├── __init__.py
+│   │   └── market_data.py    # Market data definitions
+│   └── utils/                # Utility functions
+│       ├── __init__.py
+│       └── formatters.py     # Formatting helpers
+├── tests/                    # Test suite
+│   ├── test_data_collection.py
+│   ├── test_analysis.py
+│   ├── test_intelligence.py
+│   ├── test_pipeline.py
+│   └── test_utils.py
+├── docs/                     # Documentation
+│   ├── CONTRIBUTING.md
+│   └── CODE_OF_CONDUCT.md
+├── examples/                 # Usage examples
+│   └── analysis_example.py
+├── .github/
+│   └── workflows/
+│       └── ci.yml            # CI/CD pipeline
+├── .env.example              # Environment template
+├── .gitignore
+├── Dockerfile
+├── docker-compose.yml
+├── LICENSE
+├── README.md
+├── requirements.txt
+└── setup.py
 ```
 
-## 🛠️ Built With
+## Configuration
 
-- **Python 3.11+** - Core runtime
-- **AI Agents** - Multi-step data analysis and insight generation
-- **Data Visualization** - Matplotlib + Plotly for market charts
+### Environment Variables
 
-## 📊 Roadmap
-
-- [x] **v0.1** - Core market analysis engine
-- [x] **v0.2** - Modular agent architecture + multi-market comparison
-- [ ] **v0.3** - AI-powered demand forecasting
-- [ ] **v0.4** - Real-time trade policy monitoring
-- [ ] **v0.5** - Competitive landscape dashboard
-- [ ] **v1.0** - Integration with customs databases
-
-## 🧪 Testing
+Copy `.env.example` to `.env` and configure:
 
 ```bash
-pytest tests/ -v
-pytest --cov=src tests/
+# API Configuration
+TRADESCOPE_API_KEY=your_api_key
+TRADESCOPE_API_URL=https://api.tradescope.io/v1
+
+# Logging
+LOG_LEVEL=INFO
+
+# Output Settings
+DEFAULT_OUTPUT_FORMAT=text
 ```
 
-## 👤 Author
+### Market Data
 
-**Mary Ma** — [@mrningzeoutlook-pixel](https://github.com/mrningzeoutlook-pixel)
+Market data is configured in `src/config/market_data.py`:
 
-## 📝 License
+```python
+MARKET_DATA = {
+    "EU": MarketInfo(
+        country="European Union",
+        region="Europe",
+        tariff_rate=12.0,
+        demand_index=85.0,
+        competition_level="High",
+        risk_score=0.3,
+    ),
+    # ... more markets
+}
+```
 
-MIT License
+### Product Categories
+
+Configure product categories with HS codes:
+
+```python
+PRODUCT_CATEGORIES = {
+    "women-apparel": {
+        "hs_codes": ["6204", "6206"],
+        "avg_margin": 0.45,
+        "description": "Women's clothing",
+    },
+    # ... more products
+}
+```
+
+## Testing
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ -v --cov=src --cov-report=html
+
+# Run specific test file
+pytest tests/test_pipeline.py -v
+```
+
+## Docker
+
+### Build Image
+
+```bash
+docker build -t tradescope .
+```
+
+### Run with Docker
+
+```bash
+# CLI mode
+docker run --rm tradescope python tradescope.py analyze --product "electronics" --market "EU"
+
+# Interactive shell
+docker compose --profile shell run tradescope-shell
+```
+
+## Roadmap
+
+- [x] Core market analysis engine
+- [x] Tariff comparison tool
+- [x] Multi-format report generation
+- [x] Docker support
+- [ ] AI-powered demand forecasting
+- [ ] Real-time trade policy monitoring
+- [ ] Competitive landscape dashboard
+- [ ] Integration with customs databases
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
